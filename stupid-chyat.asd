@@ -4,6 +4,7 @@
     :version "0.0"
     :depends-on (:cl-fad :cl-who :hunchentoot)
     :components ((:file "package")
+                 (:file "protection" :depends-on ("package"))
                  (:file "db" :depends-on ("package"))
                  (:file "response" :depends-on ("package"))
                  (:file "chyat" :depends-on ("package"))))

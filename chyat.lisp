@@ -6,7 +6,11 @@
   (generate-html-response))
 
 (define-easy-handler (postmsg :uri "/postmsg") ((message :real-name "msg"))
-  (if (string/= "" message) (post-message message (user-agent)))
+  (let ((ua-stripped (strip-tags (user-agent)))
+        (message-stripped (strip-tags message)))
+    (if (and (message-allowed message-stripped)
+             (message-allowed ua-stripped))
+        (post-message message-stripped ua-stripped)))
   (generate-html-response))
 
 (defun start-chat ()
