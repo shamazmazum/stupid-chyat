@@ -5,6 +5,8 @@
 (defparameter *not-the-same-after-time* 40
   "The same messages are not considered the same after
    this time (in seconds)")
+(export '(*not-the-same-after-posts*
+          *not-the-same-after-time*))
 
 (defun message-allowed (string)
   "Check if message is allowed (naïve spam protection)"

@@ -2,6 +2,7 @@
 
 (defparameter *show-messages* 10
   "Show no more than this number of mesages")
+(export 'show-messages)
 (defvar *id* 0)
 
 (defun get-time-string (time)
@@ -74,5 +75,3 @@
                             :ua user-agent)))
     (db-output msg)
     (incf *id*)))
-
-(export 'show-messages)
