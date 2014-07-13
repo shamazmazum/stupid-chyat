@@ -6,7 +6,7 @@
   (generate-html-response))
 
 (define-easy-handler (postmsg :uri "/postmsg") ((message :real-name "msg"))
-  (if (string/= "" message) (post-message message))
+  (if (string/= "" message) (post-message message (user-agent)))
   (generate-html-response))
 
 (defun start-chat ()

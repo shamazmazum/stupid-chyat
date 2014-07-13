@@ -24,6 +24,7 @@
 (defstruct db-entry
   (id   0   :type integer)
   (time 0   :type integer)
+  ua
   author
   message)
 
