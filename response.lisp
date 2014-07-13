@@ -10,6 +10,20 @@
     (format nil "~2,'0d:~2,'0d:~2,'0d ~d/~d/~d"
             hour minute second date month year)))
 
+(defun generate-go-away!-response ()
+  "Produce a `go away!' HTML response for spammers"
+  (setf (html-mode) :xml)
+  (with-html-output-to-string (out nil :prologue t)
+    (:html
+     (:head
+      (:meta :http-equiv "content-type"
+             :content "text/html; charset=utf-8")
+      (:meta :http-equiv "refresh"
+                   :content "7;URL=/"))
+     (:body
+      (:h1 "Welcome to Stupid Chyat!")
+      (:h2 "No, wait! You are no more welocmed here. Begone, spamer!")))))
+
 (defun generate-html-response ()
   "Produce a HTML response "
   (setf (html-mode) :xml)
@@ -18,8 +32,8 @@
      (:head
       (:meta :http-equiv "content-type"
              :content "text/html; charset=utf-8")
-      #+nil (:meta :http-equiv "refresh"
-                   :content "15"))
+      (:meta :http-equiv "refresh"
+                   :content "35"))
      (:body
       (:h1 "Welcome to Stupid Chyat!")
       (terpri out)

@@ -8,10 +8,12 @@
 (define-easy-handler (postmsg :uri "/postmsg") ((message :real-name "msg"))
   (let ((ua-stripped (strip-tags (user-agent)))
         (message-stripped (strip-tags message)))
-    (if (and (string/= "" message-stripped)
-             (message-allowed message-stripped))
-        (post-message message-stripped ua-stripped)))
-  (generate-html-response))
+    (cond
+      ((and (string/= "" message-stripped)
+            (message-allowed message-stripped))
+       (post-message message-stripped ua-stripped)
+       (generate-html-response))
+      (t (generate-go-away!-response)))))
 
 (defun start-chat ()
   "Start the chat"

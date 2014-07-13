@@ -2,7 +2,7 @@
 (defparameter *not-the-same-after-posts* 30
   "The same messages are not considered the same after
    this number of posts")
-(defparameter *not-the-same-after-time* 30
+(defparameter *not-the-same-after-time* 40
   "The same messages are not considered the same after
    this time (in seconds)")
 
