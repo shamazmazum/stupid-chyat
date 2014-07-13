@@ -5,14 +5,16 @@
 (define-easy-handler (root :uri "/") ()
   (generate-html-response))
 
-(define-easy-handler (postmsg :uri "/postmsg") ((message :real-name "msg"))
+(define-easy-handler (postmsg :uri "/postmsg") ((message :real-name "msg")
+                                                (answer-str :real-name "captcha"))
   (let ((ua-stripped (strip-tags (user-agent)))
         (message-stripped (strip-tags message)))
     (cond
       ((or (null message-stripped)
            (string= "" message-stripped))
        (generate-html-response))
-      ((message-allowed message-stripped)
+      ((and (message-allowed message-stripped)
+            (check-captcha answer-str))
        (post-message message-stripped ua-stripped)
        (generate-html-response))
       (t (generate-go-away!-response)))))

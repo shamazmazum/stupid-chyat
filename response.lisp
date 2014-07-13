@@ -20,7 +20,7 @@
       (:meta :http-equiv "content-type"
              :content "text/html; charset=utf-8")
       (:meta :http-equiv "refresh"
-                   :content "7;URL=/"))
+                   :content "4;URL=/"))
      (:body
       (:h1 "Welcome to Stupid Chyat!")
       (:h2 "No, wait! You are no more welocmed here. Begone, spamer!")))))
@@ -43,8 +43,19 @@
       (:h2 "Chat")
       (terpri out)
       (:form :action "postmsg" :method "post"
-             "Your message"
-             (:input :type "text" :name "msg")
+             "Your message" (:br)
+             (terpri out)
+             (:input :type "text" :name "msg") (:br)
+             (terpri out)
+             (let ((captcha-str (generate-captcha)))
+               (if (and *captcha-enable* captcha-str)
+                   (htm
+                    "CAPTCHA (enter the first number and an answer separated by space, like `12 33'): "
+                    (write-string captcha-str out)  (:br)
+                    (terpri out)
+                    (:input :type "text" :name "captcha") (:br)
+                    (terpri out))))
+
              (:button :type "submit" "Post!"))
       (terpri out)
       (:table :border 0 :cellpadding 4
