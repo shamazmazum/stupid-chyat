@@ -9,8 +9,10 @@
   (let ((ua-stripped (strip-tags (user-agent)))
         (message-stripped (strip-tags message)))
     (cond
-      ((and (string/= "" message-stripped)
-            (message-allowed message-stripped))
+      ((or (null message-stripped)
+           (string= "" message-stripped))
+       (generate-html-response))
+      ((message-allowed message-stripped)
        (post-message message-stripped ua-stripped)
        (generate-html-response))
       (t (generate-go-away!-response)))))
