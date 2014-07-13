@@ -36,7 +36,8 @@
               (:tr
                (:th "ID")
                (:th "Message")
-               (:th "Date"))
+               (:th "Date")
+               (:th  "UA"))
               (loop for msg in (db-get-recent *show-messages*) do
                    (htm
                     (:tr
