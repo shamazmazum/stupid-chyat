@@ -8,8 +8,8 @@
 (define-easy-handler (postmsg :uri "/postmsg") ((message :real-name "msg"))
   (let ((ua-stripped (strip-tags (user-agent)))
         (message-stripped (strip-tags message)))
-    (if (and (message-allowed message-stripped)
-             (message-allowed ua-stripped))
+    (if (and (string/= "" message-stripped)
+             (message-allowed message-stripped))
         (post-message message-stripped ua-stripped)))
   (generate-html-response))
 

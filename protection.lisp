@@ -1,8 +1,21 @@
 (in-package :stupid-chyat)
+(defparameter *not-the-same-after-posts* 30
+  "The same messages are not considered the same after
+   this number of posts")
+(defparameter *not-the-same-after-time* 30
+  "The same messages are not considered the same after
+   this time (in seconds)")
 
 (defun message-allowed (string)
-  "Check if message is allowed (spam protection)"
-  (string/= "" string))
+  "Check if message is allowed (naïve spam protection)"
+  (let ((the-same-message
+         (find string (db-get-recent *not-the-same-after-posts*)
+               :key #'db-entry-message
+               :test #'string=)))
+    (if the-same-message
+        (> (- (get-universal-time)
+              (db-entry-time the-same-message)) *not-the-same-after-time*)
+        t)))
 
 (defun strip-tags (string &optional (max-depth 100) (depth 0))
   "Strip what looks like HTML tags"
