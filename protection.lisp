@@ -1,12 +1,4 @@
 (in-package :stupid-chyat)
-(defparameter *not-the-same-after-posts* 30
-  "The same messages are not considered the same after
-   this number of posts")
-(defparameter *not-the-same-after-time* 40
-  "The same messages are not considered the same after
-   this time (in seconds)")
-(export '(*not-the-same-after-posts*
-          *not-the-same-after-time*))
 
 (defun message-allowed (string)
   "Check if message is allowed (naïve spam protection)"
@@ -47,9 +39,6 @@
 (defvar *captcha-lock*
   (bordeaux-threads:make-lock "captcha lock")
   "Lock protecting *CAPTCHA-POOL*")
-(defparameter *captcha-enable* t
-  "CAPTCHA is enabled if T")
-(export '*captcha-enable*)
 
 (defun register-captcha (gen/check)
   "Register CAPTCHA generator/checker functions"

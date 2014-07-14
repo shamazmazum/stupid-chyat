@@ -1,25 +1,10 @@
 (in-package :stupid-chyat)
 
-(defparameter *db-directory* "~/.stupid-chyat-db/"
-  "Directory where database is held")
-;; FIXME: must be one value for entire database
-(defparameter *start-over-after* #.(* 15 10)
-  "Start over with a new file after this number of messages.
-   Must be multiple of *SYNC-AFTER*.")
-(defparameter *sync-after* 15
-  "Synchronize db after this number of messages")
-(defparameter *name-prefix* "db")
-
 (defvar *current-stream*)
 (defvar *messages* nil
   "Messages in memory")
 (defvar *db-counter* 0
   "How many db files we have")
-
-(export '(*db-directory*
-          *start-over-after*
-          *sync-after*
-          *name-prefix*))
 
 (defstruct db-entry
   (id   0   :type integer)

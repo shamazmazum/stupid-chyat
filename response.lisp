@@ -1,8 +1,5 @@
 (in-package :stupid-chyat)
 
-(defparameter *show-messages* 10
-  "Show no more than this number of mesages")
-(export 'show-messages)
 (defvar *id* 0)
 
 (defun get-time-string (time)
@@ -34,7 +31,7 @@
       (:meta :http-equiv "content-type"
              :content "text/html; charset=utf-8")
       (:meta :http-equiv "refresh"
-                   :content "35"))
+             :content "35")) ; FIXME (str *refresh-after*)
      (:body
       (:h1 "Welcome to Stupid Chyat!")
       (terpri out)

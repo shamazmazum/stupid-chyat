@@ -30,5 +30,3 @@
   "Stop the chat"
   (stop *acceptor*)
   (finalize-db))
-
-(export '(start-chat stop-chat))
