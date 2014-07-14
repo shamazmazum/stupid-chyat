@@ -46,7 +46,7 @@
       (:form :action "postmsg" :method "post"
              "Your message" (:br)
              (terpri out)
-             (:input :type "text" :name "msg") (:br)
+             (:input :type "text" :name "msg" :size "50") (:br)
              (terpri out)
              (let ((captcha-str (generate-captcha)))
                (if (and *captcha-enable* captcha-str)
