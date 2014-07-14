@@ -29,8 +29,7 @@
 (defstruct captcha
   (id        0   :type integer)
   (answer    ""  :type string)
-  (time      0   :type integer)
-  (processed nil :type boolean))
+  (time      0   :type integer))
 (defvar *captcha-pool* nil
   "Pool of current (not processed and not expired yet)
    tests")
@@ -48,11 +47,20 @@
   "Generate CAPTCHA for user and put it in pool"
   (if *captcha-providers*
       (bordeaux-threads:with-lock-held (*captcha-lock*)
+        (if (> (length *captcha-pool*) 200)
+            (flet ((captcha-expired (captcha)
+                     (> (- (get-universal-time)
+                           (captcha-time captcha))
+                        *refresh-after*)))
+              (setq *captcha-pool*
+                    (delete-if #'captcha-expired *captcha-pool*))))
+
         (let* ((last-captcha (car *captcha-pool*))
                (id (if last-captcha
                        (1+ (captcha-id last-captcha))
                        0))
                (gen/check-num (random (length *captcha-providers*))))
+
           (multiple-value-bind (question answer)
               (funcall (nth gen/check-num *captcha-providers*))
             (push (make-captcha :id id
@@ -71,12 +79,9 @@
           (let* ((answer (subseq answer-str (1+ rest)))
                  (captcha (find id *captcha-pool*
                                 :key #'captcha-id)))
-            (when (null captcha)
-              (warn "Cannot find still unprocessed captcha (or it is a spam attack)")
-              (return-from check-captcha nil))
-            (if (and (not (captcha-processed captcha))
-                     (string= (captcha-answer captcha) answer))
-                (setf (captcha-processed captcha) t)))))))
+            (when captcha
+              (setq *captcha-pool* (delete captcha *captcha-pool*))
+              (string= (captcha-answer captcha) answer)))))))
 
 (defun multiple-reals ()
   (let ((num1 (random 10))
