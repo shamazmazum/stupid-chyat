@@ -85,4 +85,5 @@
      (format nil "~d*~d = " num1 num2)
      (format nil "~d" (* num1 num2)))))
 
-(register-captcha #'multiple-reals)
+(eval-when (:load-toplevel)
+  (register-captcha #'multiple-reals))

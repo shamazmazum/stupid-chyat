@@ -2,6 +2,9 @@
 
 (defvar *id* 0)
 
+(eval-when (:load-toplevel :execute)
+  (setf (html-mode) :sgml))
+
 (defun get-time-string (time)
   (multiple-value-bind (second minute hour date month year)
       (decode-universal-time time)
@@ -10,24 +13,25 @@
 
 (defun generate-go-away!-response ()
   "Produce a `go away!' HTML response for spammers"
-  (setf (html-mode) :xml)
   (with-html-output-to-string (out nil :prologue t)
     (:html
      (:head
+      (:title "Stupid Chat")
       (:meta :http-equiv "content-type"
              :content "text/html; charset=utf-8")
       (:meta :http-equiv "refresh"
-                   :content "4;URL=/"))
+             :content "4;URL=/"))
      (:body
       (:h1 "Welcome to Stupid Chyat!")
-      (:h2 "No, wait! You are no more welocmed here. Begone, spamer!")))))
+      (:h2 "No, wait! You are no more welocmed here. Begone, spamer!")))
+    (terpri out)))
 
 (defun generate-html-response ()
   "Produce a HTML response "
-  (setf (html-mode) :xml)
   (with-html-output-to-string (out nil :prologue t)
     (:html
      (:head
+      (:title "Stupid Chat")
       (:meta :http-equiv "content-type"
              :content "text/html; charset=utf-8")
       (:meta :http-equiv "refresh"
@@ -73,7 +77,8 @@
       (:h2 "Features of my CL implementation:")
       (terpri out)
       (pprint-logical-block (out *features* :per-line-prefix "<br>")
-        (pprint-fill out *features* nil))))))
+        (pprint-fill out *features* nil))
+      (terpri out)))))
 
 (defun post-message (message user-agent)
   "Post a message. Does not return a response itself"
