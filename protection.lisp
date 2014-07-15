@@ -5,7 +5,7 @@
   (let ((the-same-message
          (find string (db-get-recent *not-the-same-after-posts*)
                :key #'db-entry-message
-               :test #'string=)))
+               :test #'string-equal)))
     (if the-same-message
         (> (- (get-universal-time)
               (db-entry-time the-same-message)) *not-the-same-after-time*)
