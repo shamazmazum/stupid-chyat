@@ -27,9 +27,11 @@
 
 ;; CAPTCHA
 (defstruct captcha
-  (id        0   :type integer)
-  (answer    ""  :type string)
-  (time      0   :type integer))
+  (id      0                                     :type integer)
+  (time    0                                     :type integer)
+  (checker #'(lambda (x) (declare (ignore x)) t) :type function)
+  data)
+
 (defvar *captcha-pool* nil
   "Pool of current (not processed and not expired yet)
    tests")
@@ -39,9 +41,9 @@
   (bordeaux-threads:make-lock "captcha lock")
   "Lock protecting *CAPTCHA-POOL*")
 
-(defun register-captcha (gen/check)
+(defun register-captcha (gen check)
   "Register CAPTCHA generator/checker functions"
-  (push gen/check *captcha-providers*))
+  (push (cons gen check) *captcha-providers*))
 
 (defun generate-captcha ()
   "Generate CAPTCHA for user and put it in pool"
@@ -61,12 +63,15 @@
                        0))
                (gen/check-num (random (length *captcha-providers*))))
 
-          (multiple-value-bind (question answer)
-              (funcall (nth gen/check-num *captcha-providers*))
+          (multiple-value-bind (data question)
+              (funcall (car (nth gen/check-num *captcha-providers*)))
+
             (push (make-captcha :id id
-                                :answer answer
+                                :data data
+                                :checker (cdr (nth gen/check-num *captcha-providers*))
                                 :time (get-universal-time))
                   *captcha-pool*)
+
             (format nil "~d ~a" id question))))))
 
 (defun check-captcha (answer-str)
@@ -81,14 +86,43 @@
                                 :key #'captcha-id)))
             (when captcha
               (setq *captcha-pool* (delete captcha *captcha-pool*))
-              (string= (captcha-answer captcha) answer)))))))
+              (funcall (captcha-checker captcha)
+                       (captcha-data captcha)
+                       answer)))))))
 
-(defun multiple-reals ()
+;; Various CAPTCHA generators/checkers
+
+(defun multiply-reals-gen ()
   (let ((num1 (random 10))
         (num2 (random 10)))
     (values
-     (format nil "~d*~d = " num1 num2)
-     (format nil "~d" (* num1 num2)))))
+     (* num1 num2)
+     (format nil "~d*~d = " num1 num2))))
+
+(defun multiply-reals-check (right-answer answer)
+  (let ((answer (parse-integer answer :junk-allowed t)))
+    (= right-answer answer)))
+
+(defun pushkin-captcha-gen ()
+  (let ((what? (random 3)))
+    (values
+     what?
+     (concatenate 'string
+                  "\"Я помню чудное мгновение...\" "
+                  (case what?
+                    (0 "Фамилия ")
+                    (1 "ИМЯ ")
+                    (2 "Отчество "))
+                  "автора"))))
+
+(defun pushkin-captcha-check (what? answer)
+  (string=
+   answer
+   (case what?
+     (0 "Пушкин")
+     (1 "Александр")
+     (2 "Сергеевич"))))
 
 (eval-when (:load-toplevel)
-  (register-captcha #'multiple-reals))
+  (register-captcha #'pushkin-captcha-gen #'pushkin-captcha-check)
+  (register-captcha #'multiply-reals-gen #'multiply-reals-check))
